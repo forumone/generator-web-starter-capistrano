@@ -1,36 +1,43 @@
 'use strict';
 var generators = require('yeoman-generator'), 
-  _ = require('lodash');
+  _ = require('lodash'),
+  Promise = require('bluebird');
 
 module.exports = generators.Base.extend({
   prompting : function() {
     var done = this.async();
+    var that = this;
+    
     var config = _.extend({
       deploy_via : 'rsync',
       keep_releases : 3
     }, this.config.getAll());
 
-    this.prompt([{
-      type: 'list',
-      name: 'deploy_via',
-      message: 'Method of deploying code',
-      choices: ['rsync', 'git'],
-      default: config.deploy_via
-    },
-    {
-      type: 'input',
-      name: 'keep_releases',
-      message: 'Number of releases to keep',
-      default: config.keep_releases
-    }], function (answers) {
-      this.config.set(answers);
-      
+    return new Promise(function(resolve, reject) {
+      that.prompt([{
+        type: 'list',
+        name: 'deploy_via',
+        message: 'Method of deploying code',
+        choices: ['rsync', 'git'],
+        default: config.deploy_via
+      },
+      {
+        type: 'input',
+        name: 'keep_releases',
+        message: 'Number of releases to keep',
+        default: config.keep_releases
+      }], function(answers) {
+        resolve(answers);
+      });
+    }).then(function(answers) {
+      that.config.set(answers);
+        
       answers.config = {};
       // Expose the answers on the parent generator
-      _.extend(this.options.parent.answers, { 'web-starter-capistrano' : answers });
-      
+      _.extend(that.options.parent.answers, { 'web-starter-capistrano' : answers });
+    }).finally(function() {
       done();
-    }.bind(this));
+    });
   },
   writing : {
     deploy : function() {
