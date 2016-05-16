@@ -1,15 +1,9 @@
 'use strict';
 var generators = require('yeoman-generator'), 
   _ = require('lodash'),
-  Promise = require('bluebird'),
-  ygp = require('yeoman-generator-bluebird');
+  Promise = require('bluebird');
 
 module.exports = generators.Base.extend({
-  initializing : {
-    async : function() {
-      ygp(this);
-    }
-  },
   prompting : function() {
     var done = this.async();
     var that = this;
@@ -19,19 +13,23 @@ module.exports = generators.Base.extend({
       keep_releases : 3
     }, this.config.getAll());
 
-    this.promptAsync([{
-      type: 'list',
-      name: 'deploy_via',
-      message: 'Method of deploying code',
-      choices: ['rsync', 'git'],
-      default: config.deploy_via
-    },
-    {
-      type: 'input',
-      name: 'keep_releases',
-      message: 'Number of releases to keep',
-      default: config.keep_releases
-    }]).then(function(answers) {
+    return new Promise(function(resolve, reject) {
+      that.prompt([{
+        type: 'list',
+        name: 'deploy_via',
+        message: 'Method of deploying code',
+        choices: ['rsync', 'git'],
+        default: config.deploy_via
+      },
+      {
+        type: 'input',
+        name: 'keep_releases',
+        message: 'Number of releases to keep',
+        default: config.keep_releases
+      }], function(answers) {
+        resolve(answers);
+      });
+    }).then(function(answers) {
       that.config.set(answers);
         
       answers.config = {};
