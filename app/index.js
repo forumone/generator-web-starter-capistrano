@@ -89,7 +89,7 @@ module.exports = generators.Base.extend({
 
       this.fs.copyTpl(
         this.templatePath('config/deploy/dev.rb'),
-        this.destinationPath('config/deploy/dev.rb'),
+        this.destinationPath('config/deploy/' + this.answers.stage_name + '.rb'),
         config
       );
       
