@@ -1,5 +1,5 @@
 # The stage to use
-set :stage, <%- stage_name %>
+set :stage, :<%- stage_name %>
 
 # An array containing site URL, used for Varnish bans
 set :site_url, %w{<%- site_url %>}

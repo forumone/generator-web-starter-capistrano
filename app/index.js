@@ -1,12 +1,6 @@
 'use strict';
 var generators = require('yeoman-generator'),
-  _ = require('lodash'),
-  path = require('path'),
-  fs = require('fs'),
-  inquirer = require('inquirer'),
-  globby = require('globby'),
-  GruntfileEditor = require('gruntfile-editor'),
-  pkg = require('../package.json');
+  _ = require('lodash');
 
 module.exports = generators.Base.extend({
   initializing : {
