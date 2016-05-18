@@ -2,72 +2,55 @@
 var generators = require('yeoman-generator'),
   _ = require('lodash');
 
+var configDefault = {
+    stage_name : '',
+    site_url : '',
+    web_root : 'public',
+    deploy_path : '',
+    branch : 'master',
+    app_role : '',
+    web_role : '',
+    db_role : ''
+  };
+
 module.exports = generators.Base.extend({
-  initializing : {
+  constructor: function () {
+    generators.Base.apply(this, arguments);
+    this.argument('stages', { type: Array, required: true, desc: 'list of stages (dev, staging, production)' });
   },
   prompting : {
     plugins : function() {
       var done = this.async();
       var that = this;
-      var config = _.extend({
-        stage_name : '',
-        site_url : '',
-        web_root : 'public',
-        deploy_path : '',
-        branch : 'master',
-        app_role : '',
-        web_role : '',
-        db_role : ''
-      }, this.config.getAll());
-      
-      this.prompt([{
-        type    : 'input',
-        name    : 'stage_name',
-        message : 'Name of stage',
-        default : config.stage_name
-      },
-      {
-        type    : 'input',
-        name    : 'site_url',
-        message : 'URLs for site',
-        default : config.site_url
-      },
-      {
-        type    : 'input',
-        name    : 'web_root',
-        message : 'Web root for files',
-        default : config.web_root
-      },
-      {
-        type    : 'input',
-        name    : 'deploy_path',
-        message : 'Path to deploy files to',
-        default : config.deploy_path
-      },
-      {
-        type    : 'input',
-        name    : 'branch',
-        message : 'Branch to use',
-        default : config.branch
-      },
-      {
-        type    : 'input',
-        name    : 'app_role',
-        message : 'Connection for app role',
-        default : config.app_role
-      },
-      {
-        type    : 'input',
-        name    : 'web_role',
-        message : 'Connection for web role',
-        default : config.web_role
-      },
-      {
-        type    : 'input',
-        name    : 'db_role',
-        message : 'Connection for database role',
-        default : config.database_role_connection
-      }], function (answers) {
+      var label = {
+          stage_name : 'Name of stage',
+          site_url : 'URLs for site',
+          web_root : 'Web root for files',
+          deploy_path : 'Path to deploy files to',
+          branch : 'Branch to use',
+          app_role : 'Connection for app role',
+          web_role : 'Connection for web role',
+          db_role : 'Connection for database role'
+        };
+      var configDefaultStages = {};
+      _.forEach(this.stages, function(s) {
+        _.forEach(configDefault, function(value, key) {
+          configDefaultStages[key+'_'+s] = value;
+        });
+      });
+      var config = _.extend(configDefaultStages, this.config.getAll());
+      var questions = [];
+      _.forEach(this.stages, function(s) {
+        _.forEach(configDefault, function(value, key) {
+          var question = {};
+          question.type = 'input';
+          question.name = key + '_' + s;
+          question.message = s + '> ' + label[key];
+          question.default = configDefaultStages[key+'_'+s];
+          questions.push(question);
+        });
+      });
+      this.prompt(questions, function (answers) {
         this.config.set(answers);
         this.answers = _.extend(config, answers);
         done();
@@ -77,16 +60,19 @@ module.exports = generators.Base.extend({
   writing : {
     ruby : function() {
       var done = this.async();
-      
-      // Get current system config
       var config = this.answers;
-
-      this.fs.copyTpl(
-        this.templatePath('config/deploy/dev.rb'),
-        this.destinationPath('config/deploy/' + this.answers.stage_name + '.rb'),
-        config
-      );
-      
+      var that = this;
+      _.forEach(this.stages, function(s) {
+        var localConf = {};
+        _.forEach(configDefault, function(value, key) {
+          localConf[key] = config[key+'_'+s];
+        });
+        that.fs.copyTpl(
+            that.templatePath('config/deploy/dev.rb'),
+            that.destinationPath('config/deploy/' + s + '.rb'),
+            localConf
+          );
+      });
       done();
     }
   }
