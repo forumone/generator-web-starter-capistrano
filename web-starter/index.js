@@ -2,12 +2,14 @@
 var generators = require('yeoman-generator'), 
   _ = require('lodash'),
   Promise = require('bluebird'),
+  pkg = require('../package.json'),
   ygp = require('yeoman-generator-bluebird');
 
 module.exports = generators.Base.extend({
   initializing : {
     async : function() {
       ygp(this);
+      this.options.addDevDependency(pkg.name, '^' + pkg.version);
     },
   },
   prompting : function() {
