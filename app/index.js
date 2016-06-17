@@ -50,16 +50,18 @@ module.exports = generators.Base.extend({
           questions.push(question);
         });
       });
-      this.prompt(questions, function (answers) {
-        this.config.set(answers);
-        this.answers = _.extend(config, answers);
-        done();
-      }.bind(this));
+      
+      var that = this;
+      
+      return this.prompt(questions)
+      .then(function(answers) {
+        that.config.set(answers);
+        that.answers = _.extend(config, answers);
+      });
     }
   },
   writing : {
     ruby : function() {
-      var done = this.async();
       var config = this.answers;
       var that = this;
       _.forEach(this.stages, function(s) {
@@ -73,7 +75,6 @@ module.exports = generators.Base.extend({
             localConf
           );
       });
-      done();
     }
   }
 });

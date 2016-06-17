@@ -13,7 +13,6 @@ module.exports = generators.Base.extend({
     },
   },
   prompting : function() {
-    var done = this.async();
     var that = this;
     
     var config = _.extend({
@@ -21,7 +20,7 @@ module.exports = generators.Base.extend({
       keep_releases : 3
     }, this.config.getAll());
 
-    this.promptAsync([{
+    return this.prompt([{
       type: 'list',
       name: 'deploy_via',
       message: 'Method of deploying code',
@@ -40,15 +39,10 @@ module.exports = generators.Base.extend({
       answers.config = {};
       // Expose the answers on the parent generator
       _.extend(that.options.parent.answers, { 'web-starter-capistrano' : answers });
-    })
-    .finally(function() {
-      done();
     });
   },
   writing : {
     deploy : function() {
-      var done = this.async();
-      
       // Get current system config for this sub-generator
       var config = this.options.parent.answers['web-starter-capistrano'];
       _.extend(config, this.options.parent.answers);
@@ -65,8 +59,6 @@ module.exports = generators.Base.extend({
         this.destinationPath('config/deploy.rb'),
         config
       );
-
-      done();
     }
   }
 });
