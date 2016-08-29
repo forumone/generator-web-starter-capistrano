@@ -10,6 +10,8 @@ module.exports = generators.Base.extend({
     async : function() {
       ygp(this);
       this.options.addDevDependency(pkg.name, '~' + pkg.version);
+      this.options.addRubyGem('capistrano', '3.4');
+      this.options.addRubyGem('json', '~>1.8');
     },
   },
   prompting : function() {
@@ -57,6 +59,24 @@ module.exports = generators.Base.extend({
       this.fs.copyTpl(
         this.templatePath('config/deploy.rb'),
         this.destinationPath('config/deploy.rb'),
+        config
+      );
+    },
+    capfile : function() {
+      // Get current system config for this sub-generator
+      var config = this.options.parent.answers['web-starter-capistrano'];
+      _.extend(config, this.options.parent.answers);
+      
+      config.config = _.map(config.config, function(val, idx) {
+        return {
+          key : idx,
+          value : val.toString()
+        }
+      });
+
+      this.fs.copyTpl(
+        this.templatePath('Capfile'),
+        this.destinationPath('Capfile'),
         config
       );
     }
