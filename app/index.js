@@ -20,7 +20,6 @@ module.exports = generators.Base.extend({
   },
   prompting : {
     plugins : function() {
-      var done = this.async();
       var that = this;
       var label = {
           stage_name : 'Name of stage',
@@ -35,7 +34,7 @@ module.exports = generators.Base.extend({
       var configDefaultStages = {};
       _.forEach(this.stages, function(s) {
         _.forEach(configDefault, function(value, key) {
-          configDefaultStages[key+'_'+s] = value;
+          configDefaultStages[key + '_' + s] = value;
         });
       });
       var config = _.extend(configDefaultStages, this.config.getAll());
@@ -64,16 +63,18 @@ module.exports = generators.Base.extend({
     ruby : function() {
       var config = this.answers;
       var that = this;
+      
       _.forEach(this.stages, function(s) {
         var localConf = {};
         _.forEach(configDefault, function(value, key) {
-          localConf[key] = config[key+'_'+s];
+          localConf[key] = config[key + '_' + s];
         });
+        
         that.fs.copyTpl(
-            that.templatePath('config/deploy/dev.rb'),
-            that.destinationPath('config/deploy/' + s + '.rb'),
-            localConf
-          );
+          that.templatePath('config/deploy/dev.rb'),
+          that.destinationPath('config/deploy/' + s + '.rb'),
+          localConf
+        );
       });
     }
   }
