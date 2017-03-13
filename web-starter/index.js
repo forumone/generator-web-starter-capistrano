@@ -45,6 +45,17 @@ module.exports = generators.Base.extend({
   },
   writing : {
     deploy : function() {
+      // copy main capistrano scaffolding
+      this.fs.copy(
+        this.templatePath('capistrano'),
+        this.destinationPath('capistrano')
+      );
+
+      this.fs.copy(
+        this.templatePath('lib'),
+        this.destinationPath('lib')
+      );
+
       // Get current system config for this sub-generator
       var config = this.options.parent.answers['web-starter-capistrano'];
       _.extend(config, this.options.parent.answers);
