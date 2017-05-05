@@ -34,7 +34,7 @@ set :ssh_options, {
 set :platform, "<%= platform %>"
 
 # rsync settings
-set :rsync_options, %w[--recursive --chmod=Dug=rwx,Do=rx --perms --delete --delete-excluded --exclude=.git* --exclude=node_modules]
+set :rsync_options, %w[--archive --recursive --chmod=Dug=rwx,Do=rx --perms --delete --delete-excluded --exclude=.git* --exclude=node_modules]
 set :rsync_copy, "rsync --archive --acls --xattrs"
 set :rsync_cache, "shared/deploy"
 
