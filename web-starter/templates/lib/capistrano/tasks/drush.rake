@@ -133,25 +133,23 @@ namespace :drush do
     end
   end
 
-  if fetch(:platform) == "drupal8"
-    desc "Rebuilds the Drupal cache"
-    task :cr do
-      on roles(:db) do
-        within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
-          fetch(:site_url).each do |site|
-            execute :drush, "-y -p -r #{current_path}/#{fetch(:webroot, 'public')} -l #{site}", 'cr'
-          end
+  desc "(Drupal 8) Rebuilds the Drupal cache"
+  task :cr do
+    on roles(:db) do
+      within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
+        fetch(:site_url).each do |site|
+          execute :drush, "-y -p -r #{current_path}/#{fetch(:webroot, 'public')} -l #{site}", 'cr'
         end
       end
     end
-  else
-    desc "Clears the Drupal cache"
-    task :cc do
-      on roles(:db) do
-        within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
-          fetch(:site_url).each do |site|
-            execute :drush, "-y -p -r #{current_path}/#{fetch(:webroot, 'public')} -l #{site}", 'cc all'
-          end
+  end
+
+  desc "(Drupal 7) Clears the Drupal cache"
+  task :cc do
+    on roles(:db) do
+      within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
+        fetch(:site_url).each do |site|
+          execute :drush, "-y -p -r #{current_path}/#{fetch(:webroot, 'public')} -l #{site}", 'cc all'
         end
       end
     end
@@ -186,28 +184,26 @@ namespace :drush do
   end
   
   namespace :configuration do
-    if fetch(:platform) == "drupal8"
-      desc "Import Configuration into the database from the config management directory"
-      task :import do
-        on roles(:db) do
-          within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
-            execute :drush, "-y -p -r #{current_path}/#{fetch(:webroot, 'public')} -l #{fetch(:site_url)}", 'config-import --partial'
-          end
+    desc "(Drupal 8) Import Configuration into the database from the config management directory"
+    task :import do
+      on roles(:db) do
+        within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
+          execute :drush, "-y -p -r #{current_path}/#{fetch(:webroot, 'public')} -l #{fetch(:site_url)}", 'config-import --partial'
         end
+      end
 
-        invoke 'drush:cr'
-      end
-    else
-      desc "Load Configuration from the Data Store and apply it to the Active Store"
-      task :sync do
-        on roles(:db) do
-          within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
-            execute :drush, "-y -p -r #{current_path}/#{fetch(:webroot, 'public')} -l #{fetch(:site_url)}", 'config-sync'
-          end
+      invoke 'drush:cr'
+    end
+
+    desc "(Drupal 7) Load Configuration from the Data Store and apply it to the Active Store"
+    task :sync do
+      on roles(:db) do
+        within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
+          execute :drush, "-y -p -r #{current_path}/#{fetch(:webroot, 'public')} -l #{fetch(:site_url)}", 'config-sync'
         end
-        
-        invoke 'drush:cc'
       end
+      
+      invoke 'drush:cc'
     end
   end
   
