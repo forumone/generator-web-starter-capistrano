@@ -57,8 +57,9 @@ module.exports = generators.Base.extend({
       );
 
       // Get current system config for this sub-generator
-      var config = this.options.parent.answers['web-starter-capistrano'];
-      _.extend(config, this.options.parent.answers);
+      var config = Object.assign({
+        platform: 'html'
+      }, this.options.parent.answers['web-starter-capistrano'], this.options.parent.answers);
       
       config.config = _.map(config.config, function(val, idx) {
         return {
