@@ -1,6 +1,6 @@
 {
   "name": "generator-web-starter-capistrano",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "A Capistrano yeoman sub-generator for web-starter",
   "keywords": [
     "yeoman-generator"
