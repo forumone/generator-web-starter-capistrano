@@ -53,6 +53,7 @@ Rake::Task["web:build"].enhance do
   end
 end
 
+set :app_webroot, '<%= services.web.doc_root %>'
 <% config.forEach(function(item){ %>
 set :<%= item.key %>, <%= item.value %>
 <% }) %>
