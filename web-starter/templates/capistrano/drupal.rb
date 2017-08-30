@@ -24,32 +24,32 @@ namespace :drupal do
   task :settings do
     on roles(:app) do
       fetch(:site_folder).each do |folder|
-        if test " [ -e #{current_path}/#{fetch(:webroot, 'public')}/sites/#{folder}/settings.php ]"
-          execute :rm, "-f", "#{current_path}/#{fetch(:webroot, 'public')}/sites/#{folder}/settings.php"
+        if test " [ -e #{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php ]"
+          execute :rm, "-f", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php"
         end
-        execute :ln, '-s', "#{current_path}/#{fetch(:webroot, 'public')}/sites/#{folder}/settings.#{fetch(:stage)}.php", "#{current_path}/#{fetch(:webroot, 'public')}/sites/#{folder}/settings.php"
+        execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.#{fetch(:stage)}.php", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php"
         # Set permissions on settings file and directory so Drupal doesn't complain. The permission values are set in lib/capistrano/tasks/drush.rake.
-        execute :chmod, fetch(:settings_file_perms), "#{current_path}/#{fetch(:webroot, 'public')}/sites/#{folder}/settings.#{fetch(:stage)}.php"
-        execute :chmod, fetch(:site_directory_perms), "#{current_path}/#{fetch(:webroot, 'public')}/sites/#{folder}"
+        execute :chmod, fetch(:settings_file_perms), "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.#{fetch(:stage)}.php"
+        execute :chmod, fetch(:site_directory_perms), "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}"
       end
         
       # If a .htaccess file for the stage exists
-      if test " [ -f #{current_path}/#{fetch(:webroot, 'public')}/htaccess.#{fetch(:stage)} ]"
+      if test " [ -f #{current_path}/#{fetch(:app_webroot, 'public')}/htaccess.#{fetch(:stage)} ]"
         # If there is currently an .htaccess file
-        if test " [ -f #{current_path}/#{fetch(:webroot, 'public')}/.htaccess ]"
-          execute :rm, "#{current_path}/#{fetch(:webroot, 'public')}/.htaccess"
+        if test " [ -f #{current_path}/#{fetch(:app_webroot, 'public')}/.htaccess ]"
+          execute :rm, "#{current_path}/#{fetch(:app_webroot, 'public')}/.htaccess"
         end
         
-        execute :ln, '-s', "#{current_path}/#{fetch(:webroot, 'public')}/htaccess.#{fetch(:stage)}", "#{current_path}/#{fetch(:webroot, 'public')}/.htaccess"
+        execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/htaccess.#{fetch(:stage)}", "#{current_path}/#{fetch(:app_webroot, 'public')}/.htaccess"
       end
       
       # If there a robots.txt file for the stage exists
-      if test " [ -f #{current_path}/#{fetch(:webroot, 'public')}/robots.#{fetch(:stage)}.txt ]"
-        if test " [ -f #{current_path}/#{fetch(:webroot, 'public')}/robots.txt ]"
-          execute :rm, "#{current_path}/#{fetch(:webroot, 'public')}/robots.txt"
+      if test " [ -f #{current_path}/#{fetch(:app_webroot, 'public')}/robots.#{fetch(:stage)}.txt ]"
+        if test " [ -f #{current_path}/#{fetch(:app_webroot, 'public')}/robots.txt ]"
+          execute :rm, "#{current_path}/#{fetch(:app_webroot, 'public')}/robots.txt"
         end
       
-        execute :ln, '-s', "#{current_path}/#{fetch(:webroot, 'public')}/robots.#{fetch(:stage)}.txt", "#{current_path}/#{fetch(:webroot, 'public')}/robots.txt"
+        execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/robots.#{fetch(:stage)}.txt", "#{current_path}/#{fetch(:app_webroot, 'public')}/robots.txt"
       end
     end
   end
