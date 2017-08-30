@@ -1,3 +1,6 @@
+# Use version of Drush supplied via Composer
+SSHKit.config.command_map[:drush] = "../vendor/drush/drush/drush"
+  
 # Revert the database when a rollback occurs
 Rake::Task["deploy:rollback_release_path"].enhance do
   invoke "drupal8:revert_database"
@@ -26,9 +29,9 @@ namespace :drupal8 do
       fetch(:site_folder).each do |folder|
         # Find and link settings.php
         if test " [ -e #{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php ]"
-          execute :rm, "-f", "#{current_path}/#{fetch(:app_webroot, 'web')}/sites/#{folder}/settings.php"
+          execute :rm, "-f", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php"
         end
-        execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'web')}/sites/#{folder}/settings.#{fetch(:stage)}.php", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php"
+        execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.#{fetch(:stage)}.php", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php"
 
         # Find and link services.yml
         if test " [ -e #{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.yml ]"
