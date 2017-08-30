@@ -37,7 +37,11 @@ namespace :drupal8 do
         if test " [ -e #{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.yml ]"
           execute :rm, "-f", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.yml"
         end
-        execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.#{fetch(:stage)}.yml", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.yml"
+        
+        # Link environment specific services file into place if it exists
+        if test " [ -e #{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.#{fetch(:stage)}.yml ]"
+          execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.#{fetch(:stage)}.yml", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.yml"
+        end
 
         # Set permissions on settings files and directory so Drupal doesn't complain. The permission values are set in lib/capistrano/tasks/drush.rake.
         execute :chmod, fetch(:settings_file_perms), "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.#{fetch(:stage)}.php"
