@@ -1,10 +1,13 @@
+# Use version of Drush supplied via Composer
+SSHKit.config.command_map[:drush] = "../vendor/drush/drush/drush"
+  
 # Revert the database when a rollback occurs
 Rake::Task["deploy:rollback_release_path"].enhance do
-  invoke "drupal:revert_database"
+  invoke "drupal8:revert_database"
 end
 
 # Backup the database when publishing a new release
-Rake::Task["deploy:publishing"].enhance ["drupal:dbbackup"]
+Rake::Task["deploy:publishing"].enhance ["drupal8:dbbackup"]
 
 # Copy drush aliases after linking the new release
 Rake::Task["deploy:symlink:release"].enhance ["drush:initialize"]
@@ -14,7 +17,7 @@ Rake::Task["deploy:published"].enhance do
   Rake::Task["drush:update"].invoke
 end
 
-namespace :drupal do
+namespace :drupal8 do
   desc "Install Drupal"
   task :install do
     invoke 'drush:siteinstall'
@@ -24,12 +27,21 @@ namespace :drupal do
   task :settings do
     on roles(:app) do
       fetch(:site_folder).each do |folder|
+        # Find and link settings.php
         if test " [ -e #{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php ]"
           execute :rm, "-f", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php"
         end
         execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.#{fetch(:stage)}.php", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.php"
-        # Set permissions on settings file and directory so Drupal doesn't complain. The permission values are set in lib/capistrano/tasks/drush.rake.
+
+        # Find and link services.yml
+        if test " [ -e #{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.yml ]"
+          execute :rm, "-f", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.yml"
+        end
+        execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.#{fetch(:stage)}.yml", "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.yml"
+
+        # Set permissions on settings files and directory so Drupal doesn't complain. The permission values are set in lib/capistrano/tasks/drush.rake.
         execute :chmod, fetch(:settings_file_perms), "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/settings.#{fetch(:stage)}.php"
+        execute :chmod, fetch(:settings_file_perms), "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}/services.#{fetch(:stage)}.yml"
         execute :chmod, fetch(:site_directory_perms), "#{current_path}/#{fetch(:app_webroot, 'public')}/sites/#{folder}"
       end
         

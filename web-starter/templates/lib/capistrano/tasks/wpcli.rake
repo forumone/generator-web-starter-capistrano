@@ -7,7 +7,7 @@ end
 namespace :wpcli do
   task :dbexport do
     on roles(:db) do
-      if test " [ -f #{current_path}/#{fetch(:webroot, 'public')}/wp-config.php ]"
+      if test " [ -f #{current_path}/#{fetch(:app_webroot, 'public')}/wp-config.php ]"
         unless test " [ -f #{release_path}/db.sql ]"
           within "#{release_path}/#{fetch(:app_webroot, 'public')}" do
             execute :wp, "db export", "#{release_path}/db.sql"

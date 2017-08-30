@@ -34,7 +34,7 @@ set :ssh_options, {
 set :platform, "<%= platform %>"
 
 # rsync settings
-set :rsync_options, %w[--recursive --chmod=Dug=rwx,Do=rx --perms --delete --delete-excluded --exclude=.git* --exclude=node_modules]
+set :rsync_options, %w[--links --recursive --chmod=Dug=rwx,Do=rx --perms --delete --delete-excluded --exclude=.git* --exclude=node_modules]
 set :rsync_copy, "rsync --archive --acls --xattrs"
 set :rsync_cache, "shared/deploy"
 
@@ -53,6 +53,7 @@ Rake::Task["web:build"].enhance do
   end
 end
 
+set :app_webroot, '<%= services.web.doc_root %>'
 <% config.forEach(function(item){ %>
 set :<%= item.key %>, <%= item.value %>
 <% }) %>

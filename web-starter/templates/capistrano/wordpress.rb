@@ -14,20 +14,20 @@ end
 namespace :wordpress do
   task :settings do
     on roles(:app) do
-      if test " [ -f #{current_path}/#{fetch(:webroot, 'public')}/wp-config.php ]"
-        execute :rm, "-f", "#{current_path}/#{fetch(:webroot, 'public')}/wp-config.php"
+      if test " [ -f #{current_path}/#{fetch(:app_webroot, 'public')}/wp-config.php ]"
+        execute :rm, "-f", "#{current_path}/#{fetch(:app_webroot, 'public')}/wp-config.php"
       end
       
-      execute :ln, '-s', "#{current_path}/#{fetch(:webroot, 'public')}/wp-config.#{fetch(:stage)}.php", "#{current_path}/#{fetch(:webroot, 'public')}/wp-config.php"
+      execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/wp-config.#{fetch(:stage)}.php", "#{current_path}/#{fetch(:app_webroot, 'public')}/wp-config.php"
         
       # If a .htaccess file for the stage exists
-      if test " [ -f #{current_path}/#{fetch(:webroot, 'public')}/htaccess.#{fetch(:stage)} ]"
+      if test " [ -f #{current_path}/#{fetch(:app_webroot, 'public')}/htaccess.#{fetch(:stage)} ]"
         # If there is currently an .htaccess file
-        if test " [ -f #{current_path}/#{fetch(:webroot, 'public')}/.htaccess ]"
-          execute :rm, "#{current_path}/#{fetch(:webroot, 'public')}/.htaccess"
+        if test " [ -f #{current_path}/#{fetch(:app_webroot, 'public')}/.htaccess ]"
+          execute :rm, "#{current_path}/#{fetch(:app_webroot, 'public')}/.htaccess"
         end
         
-        execute :ln, '-s', "#{current_path}/#{fetch(:webroot, 'public')}/htaccess.#{fetch(:stage)}", "#{current_path}/#{fetch(:webroot, 'public')}/.htaccess"
+        execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/htaccess.#{fetch(:stage)}", "#{current_path}/#{fetch(:app_webroot, 'public')}/.htaccess"
       end
     end
   end

@@ -60,6 +60,7 @@ module.exports = generators.Base.extend({
       var config = Object.assign({
         platform: 'html'
       }, this.options.parent.answers['web-starter-capistrano'], this.options.parent.answers);
+      config.services = this.options.getServices();
       
       config.config = _.map(config.config, function(val, idx) {
         return {
