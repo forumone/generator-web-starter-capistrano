@@ -71,8 +71,8 @@ module.exports = generators.Base.extend({
         });
         
         that.fs.copyTpl(
-          that.templatePath('config/deploy/dev.rb'),
-          that.destinationPath('config/deploy/' + s + '.rb'),
+          that.templatePath('config/capistrano/deploy/dev.rb'),
+          that.destinationPath('config/capistrano/deploy/' + s + '.rb'),
           localConf
         );
       });
