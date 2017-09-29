@@ -70,8 +70,8 @@ module.exports = generators.Base.extend({
       });
 
       this.fs.copyTpl(
-        this.templatePath('config/deploy.rb'),
-        this.destinationPath('config/deploy.rb'),
+        this.templatePath('config/capistrano/deploy.rb'),
+        this.destinationPath('config/capistrano/deploy.rb'),
         config
       );
     },
