@@ -7,7 +7,7 @@ Rake::Task["deploy:rollback_release_path"].enhance do
 end
 
 # Backup the database when publishing a new release
-Rake::Task["deploy:publishing"].enhance ["drupal8:dbbackup"]
+Rake::Task["deploy:published"].enhance ["drupal8:dbbackup"]
 
 # Copy drush aliases after linking the new release
 Rake::Task["deploy:symlink:release"].enhance ["drush:initialize"]
