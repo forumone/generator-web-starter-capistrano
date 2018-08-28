@@ -29,6 +29,15 @@ namespace :wordpress do
         
         execute :ln, '-s', "#{current_path}/#{fetch(:app_webroot, 'public')}/htaccess.#{fetch(:stage)}", "#{current_path}/#{fetch(:app_webroot, 'public')}/.htaccess"
       end
+      
+      # Find and link db connection
+      if test " [ -e #{fetch(:deploy_to)}/.env ]"
+        if test " [ -e #{current_path}/.env ]"
+          execute :rm, "-f", "#{current_path}/.env"
+        end
+        execute :ln, '-s', "#{fetch(:deploy_to)}/.env", "#{current_path}/.env"
+      end
+      
     end
   end
   
